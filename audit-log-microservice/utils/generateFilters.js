@@ -1,0 +1,40 @@
+export const generateAuditLogFilters = (req) => {
+  const filters = {};
+
+  for (let key in req.query) {
+    if (
+      key === "page" ||
+      key === "limit" ||
+      key === "is_deleted" ||
+      key === "sort_by" ||
+      key === "search" ||
+      key === "organizationId" ||
+      key === "is_active" ||
+      key === "start_date" ||
+      key === "end_date"
+    ) {
+      continue;
+    } else {
+      filters[key] = { $regex: req.query[key], $options: "i" };
+    }
+  }
+
+  filters.is_deleted = req.query.is_deleted ? req.query.is_deleted : false;
+  filters.is_active = req.query.is_active ? req.query.is_active : true;
+
+  return filters;
+};
+
+// Remove All Empty Properties
+export const removeEmptyStringProperties = (obj) => {
+  for (let key in obj) {
+    if (
+      obj.hasOwnProperty(key) &&
+      typeof obj[key] === "string" &&
+      obj[key].trim() === ""
+    ) {
+      delete obj[key];
+    }
+  }
+  return obj;
+};
